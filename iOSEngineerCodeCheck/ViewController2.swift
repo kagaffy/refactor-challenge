@@ -8,54 +8,50 @@
 
 import UIKit
 
-class ViewController2: UIViewController {
-    @IBOutlet weak var ImgView: UIImageView!
+final class ViewController2: UIViewController {
+    @IBOutlet private var imageView: UIImageView!
+    @IBOutlet private var titleLabel: UILabel!
+    @IBOutlet private var languageLabel: UILabel!
+    @IBOutlet private var starsLabel: UILabel!
+    @IBOutlet private var watchersLabel: UILabel!
+    @IBOutlet private var forksLabel: UILabel!
+    @IBOutlet private var issuesLabel: UILabel!
 
-    @IBOutlet weak var TtlLbl: UILabel!
-
-    @IBOutlet weak var LangLbl: UILabel!
-
-    @IBOutlet weak var StrsLbl: UILabel!
-    @IBOutlet weak var WchsLbl: UILabel!
-    @IBOutlet weak var FrksLbl: UILabel!
-    @IBOutlet weak var IsssLbl: UILabel!
-
-    var vc1: ViewController?
+    var vc: ViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let idx = vc1?.idx, let repo = vc1?.repo[idx] else { return }
+        guard let idx = vc?.index, let repo = vc?.repository[idx] else { return }
 
-        LangLbl.text = "Written in \(repo["language"] as? String ?? "")"
-        StrsLbl.text = "\(repo["stargazers_count"] as? Int ?? 0) stars"
-        WchsLbl.text = "\(repo["watchers_count"] as? Int ?? 0) watchers"
-        FrksLbl.text = "\(repo["forks_count"] as? Int ?? 0) forks"
-        IsssLbl.text = "\(repo["open_issues_count"] as? Int ?? 0) open issues"
+        languageLabel.text = "Written in \(repo["language"] as? String ?? "")"
+        starsLabel.text = "\(repo["stargazers_count"] as? Int ?? 0) stars"
+        watchersLabel.text = "\(repo["watchers_count"] as? Int ?? 0) watchers"
+        forksLabel.text = "\(repo["forks_count"] as? Int ?? 0) forks"
+        issuesLabel.text = "\(repo["open_issues_count"] as? Int ?? 0) open issues"
         getImage()
     }
 
-    func getImage() {
-        guard let idx = vc1?.idx, let repo = vc1?.repo[idx] else { return }
+    private func getImage() {
+        guard let index = vc?.index, let repo = vc?.repository[index] else { return }
 
-        TtlLbl.text = repo["full_name"] as? String
+        titleLabel.text = repo["full_name"] as? String
 
-        if let owner = repo["owner"] as? [String: Any] {
-            if let imgURL = owner["avatar_url"] as? String {
-                guard let url = URL(string: imgURL) else { return }
-                URLSession.shared.dataTask(with: url) { data, _, err in
-                    if let err = err {
-                        print(err)
-                        return
-                    }
-                    guard let data = data else { return }
-                    if let img = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            self.ImgView.image = img
-                        }
-                    }
-                }.resume()
+        guard let owner = repo["owner"] as? [String: Any],
+            let imageUrl = owner["avatar_url"] as? String,
+            let url = URL(string: imageUrl) else { return }
+
+        URLSession.shared.dataTask(with: url) { data, _, err in
+            if let err = err {
+                print(err)
+                return
             }
-        }
+            guard let data = data else { return }
+            if let img = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.imageView.image = img
+                }
+            }
+        }.resume()
     }
 }

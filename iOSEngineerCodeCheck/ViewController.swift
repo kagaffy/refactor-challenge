@@ -8,27 +8,19 @@
 
 import UIKit
 
-class ViewController: UITableViewController, UISearchBarDelegate {
-    @IBOutlet weak var SchBr: UISearchBar!
+final class ViewController: UITableViewController, UISearchBarDelegate {
+    @IBOutlet private var searchBar: UISearchBar!
 
-    var repo: [[String: Any]] = []
-
-    var task: URLSessionTask?
-    var word: String = ""
-    var url: String = ""
-    var idx: Int?
+    private(set) var repository: [[String: Any]] = []
+    private var task: URLSessionTask?
+    private var term: String = ""
+    private var urlString: String = ""
+    private(set) var index: Int?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        SchBr.text = "GitHubのリポジトリを検索できるよー"
-        SchBr.delegate = self
-    }
-
-    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        // ↓こうすれば初期のテキストを消せる
-        searchBar.text = ""
-        return true
+        searchBar.placeholder = "GitHubのリポジトリを検索できるよー"
+        searchBar.delegate = self
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -36,52 +28,51 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        word = searchBar.text ?? ""
+        term = searchBar.text ?? ""
+        guard !term.isEmpty else { return }
 
-        if word.count != 0 {
-            url = "https://api.github.com/search/repositories?q=\(word)"
-            guard let url = URL(string: url) else { return }
-            task = URLSession.shared.dataTask(with: url) { [weak self] data, _, err in
-                if let err = err {
-                    print(err)
-                    return
-                }
-                guard let data = data else { return }
-                do {
-                    if let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                        if let items = obj["items"] as? [[String: Any]] {
-                            self?.repo = items
-                            DispatchQueue.main.async {
-                                self?.tableView.reloadData()
-                            }
+        urlString = "https://api.github.com/search/repositories?q=\(term)"
+        guard let url = URL(string: urlString) else { return }
+        task = URLSession.shared.dataTask(with: url) { [weak self] data, _, err in
+            if let err = err {
+                print(err)
+                return
+            }
+            guard let data = data else { return }
+            do {
+                if let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    if let items = obj["items"] as? [[String: Any]] {
+                        self?.repository = items
+                        DispatchQueue.main.async {
+                            self?.tableView.reloadData()
                         }
                     }
-                } catch {
-                    print(error)
                 }
+            } catch {
+                print(error)
             }
-            // これ呼ばなきゃリストが更新されません
-            task?.resume()
         }
+        // これ呼ばなきゃリストが更新されません
+        task?.resume()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "Detail" {
-            guard let dtl = segue.destination as? ViewController2 else {
+            guard let vc = segue.destination as? ViewController2 else {
                 assertionFailure()
                 return
             }
-            dtl.vc1 = self
+            vc.vc = self
         }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return repo.count
+        repository.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
-        let rp = repo[indexPath.row]
+        let rp = repository[indexPath.row]
         cell.textLabel?.text = rp["full_name"] as? String ?? ""
         cell.detailTextLabel?.text = rp["language"] as? String ?? ""
         cell.tag = indexPath.row
@@ -90,7 +81,7 @@ class ViewController: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 画面遷移時に呼ばれる
-        idx = indexPath.row
+        index = indexPath.row
         performSegue(withIdentifier: "Detail", sender: self)
     }
 }
