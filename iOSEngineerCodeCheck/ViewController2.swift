@@ -21,13 +21,13 @@ class ViewController2: UIViewController {
     @IBOutlet weak var FrksLbl: UILabel!
     @IBOutlet weak var IsssLbl: UILabel!
     
-    var vc1: ViewController!
+    var vc1: ViewController?
         
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let repo = vc1.repo[vc1.idx]
-        
+        guard let idx = vc1?.idx, let repo = vc1?.repo[idx] else { return }
+
         LangLbl.text = "Written in \(repo["language"] as? String ?? "")"
         StrsLbl.text = "\(repo["stargazers_count"] as? Int ?? 0) stars"
         WchsLbl.text = "\(repo["watchers_count"] as? Int ?? 0) watchers"
@@ -39,16 +39,23 @@ class ViewController2: UIViewController {
     
     func getImage(){
         
-        let repo = vc1.repo[vc1.idx]
+        guard let idx = vc1?.idx, let repo = vc1?.repo[idx] else { return }
         
         TtlLbl.text = repo["full_name"] as? String
         
         if let owner = repo["owner"] as? [String: Any] {
             if let imgURL = owner["avatar_url"] as? String {
-                URLSession.shared.dataTask(with: URL(string: imgURL)!) { (data, res, err) in
-                    let img = UIImage(data: data!)!
-                    DispatchQueue.main.async {
-                        self.ImgView.image = img
+                guard let url = URL(string: imgURL) else { return }
+                URLSession.shared.dataTask(with: url) { (data, _, err) in
+                    if let err = err {
+                        print(err)
+                        return
+                    }
+                    guard let data = data else { return }
+                    if let img = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            self.ImgView.image = img
+                        }
                     }
                 }.resume()
             }

@@ -15,9 +15,9 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     var repo: [[String: Any]]=[]
     
     var task: URLSessionTask?
-    var word: String!
-    var url: String!
-    var idx: Int!
+    var word: String = ""
+    var url: String = ""
+    var idx: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,18 +38,28 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
-        word = searchBar.text!
+        word = searchBar.text ?? ""
         
         if word.count != 0 {
-            url = "https://api.github.com/search/repositories?q=\(word!)"
-            task = URLSession.shared.dataTask(with: URL(string: url)!) { [weak self] (data, res, err) in
-                if let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] {
-                    if let items = obj["items"] as? [[String: Any]] {
-                        self?.repo = items
-                        DispatchQueue.main.async {
-                            self?.tableView.reloadData()
+            url = "https://api.github.com/search/repositories?q=\(word)"
+            guard let url = URL(string: url) else { return }
+            task = URLSession.shared.dataTask(with: url) { [weak self] (data, _, err) in
+                if let err = err {
+                    print(err)
+                    return
+                }
+                guard let data = data else { return }
+                do {
+                    if let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        if let items = obj["items"] as? [[String: Any]] {
+                            self?.repo = items
+                            DispatchQueue.main.async {
+                                self?.tableView.reloadData()
+                            }
                         }
                     }
+                } catch {
+                    print(error)
                 }
             }
         // これ呼ばなきゃリストが更新されません
@@ -61,7 +71,10 @@ class ViewController: UITableViewController, UISearchBarDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "Detail"{
-            let dtl = segue.destination as! ViewController2
+            guard let dtl = segue.destination as? ViewController2 else {
+                assertionFailure()
+                return
+            }
             dtl.vc1 = self
         }
         
