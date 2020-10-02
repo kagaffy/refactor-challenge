@@ -1,2 +1,2 @@
 format:
-		swiftformat .
+    swiftformat .
