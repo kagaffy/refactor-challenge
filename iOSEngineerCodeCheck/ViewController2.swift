@@ -22,24 +22,22 @@ final class ViewController2: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let idx = vc?.index, let repo = vc?.repository[idx] else { return }
+        guard let index = vc?.index, let repo = vc?.searchResult?.repositories[index] else { return }
 
-        languageLabel.text = "Written in \(repo["language"] as? String ?? "")"
-        starsLabel.text = "\(repo["stargazers_count"] as? Int ?? 0) stars"
-        watchersLabel.text = "\(repo["watchers_count"] as? Int ?? 0) watchers"
-        forksLabel.text = "\(repo["forks_count"] as? Int ?? 0) forks"
-        issuesLabel.text = "\(repo["open_issues_count"] as? Int ?? 0) open issues"
+        languageLabel.text = "Written in \(repo.language ?? "")"
+        starsLabel.text = "\(repo.starsCount) stars"
+        watchersLabel.text = "\(repo.watchersCount) watchers"
+        forksLabel.text = "\(repo.forksCount) forks"
+        issuesLabel.text = "\(repo.issuesCount) open issues"
         getImage()
     }
 
     private func getImage() {
-        guard let index = vc?.index, let repo = vc?.repository[index] else { return }
+        guard let index = vc?.index, let repo = vc?.searchResult?.repositories[index] else { return }
 
-        titleLabel.text = repo["full_name"] as? String
+        titleLabel.text = repo.name
 
-        guard let owner = repo["owner"] as? [String: Any],
-            let imageUrl = owner["avatar_url"] as? String,
-            let url = URL(string: imageUrl) else { return }
+        guard let url = URL(string: repo.avatarUrl) else { return }
 
         URLSession.shared.dataTask(with: url) { data, _, err in
             if let err = err {
