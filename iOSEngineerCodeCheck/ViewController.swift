@@ -12,9 +12,7 @@ final class ViewController: UITableViewController, UISearchBarDelegate {
     @IBOutlet private var searchBar: UISearchBar!
 
     private(set) var searchResult: SearchResult?
-    private var task: URLSessionTask?
-    private var term: String = ""
-    private var urlString: String = ""
+    private var task: GitHubAPIService?
     private(set) var index: Int?
 
     override func viewDidLoad() {
@@ -28,28 +26,16 @@ final class ViewController: UITableViewController, UISearchBarDelegate {
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        term = searchBar.text ?? ""
+        let term = searchBar.text ?? ""
         guard !term.isEmpty else { return }
 
-        urlString = "https://api.github.com/search/repositories?q=\(term)"
-        guard let url = URL(string: urlString) else { return }
-        task = URLSession.shared.dataTask(with: url) { [weak self] data, _, err in
-            if let err = err {
-                print(err)
-                return
-            }
-            guard let data = data else { return }
-            do {
-                self?.searchResult = try JSONDecoder().decode(SearchResult.self, from: data)
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            } catch {
-                print(error)
-            }
-        }
-        // これ呼ばなきゃリストが更新されません
-        task?.resume()
+        task = GitHubAPIService()
+        task?.request(by: term, onSuccess: { [weak self] searchResult in
+            self?.searchResult = searchResult
+            self?.tableView.reloadData()
+        }, onError: { error in
+            print(error)
+        })
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
