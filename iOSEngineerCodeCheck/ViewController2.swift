@@ -17,13 +17,17 @@ final class ViewController2: UIViewController {
     @IBOutlet private var forksLabel: UILabel!
     @IBOutlet private var issuesLabel: UILabel!
 
-    var vc: ViewController?
+    var repository: Repository?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupViews()
+    }
 
-        guard let index = vc?.index, let repo = vc?.searchResult?.repositories[index] else { return }
+    private func setupViews() {
+        guard let repo = repository else { return }
 
+        titleLabel.text = repo.name
         languageLabel.text = "Written in \(repo.language ?? "")"
         starsLabel.text = "\(repo.starsCount) stars"
         watchersLabel.text = "\(repo.watchersCount) watchers"
@@ -33,10 +37,7 @@ final class ViewController2: UIViewController {
     }
 
     private func getImage() {
-        guard let index = vc?.index, let repo = vc?.searchResult?.repositories[index] else { return }
-
-        titleLabel.text = repo.name
-
+        guard let repo = repository else { return }
         guard let url = URL(string: repo.avatarUrl) else { return }
 
         URLSession.shared.dataTask(with: url) { data, _, err in

@@ -11,9 +11,8 @@ import UIKit
 final class ViewController: UITableViewController, UISearchBarDelegate {
     @IBOutlet private var searchBar: UISearchBar!
 
-    private(set) var searchResult: SearchResult?
+    private var searchResult: SearchResult?
     private var task: GitHubAPIService?
-    private(set) var index: Int?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +43,7 @@ final class ViewController: UITableViewController, UISearchBarDelegate {
                 assertionFailure()
                 return
             }
-            vc.vc = self
+            vc.repository = sender as? Repository
         }
     }
 
@@ -54,16 +53,15 @@ final class ViewController: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
-        let rp = searchResult?.repositories[indexPath.row]
-        cell.textLabel?.text = rp?.name
-        cell.detailTextLabel?.text = rp?.language
+        let repo = searchResult?.repositories[indexPath.row]
+        cell.textLabel?.text = repo?.name
+        cell.detailTextLabel?.text = repo?.language
         cell.tag = indexPath.row
         return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // 画面遷移時に呼ばれる
-        index = indexPath.row
-        performSegue(withIdentifier: "Detail", sender: self)
+        let repo = searchResult?.repositories[indexPath.row]
+        performSegue(withIdentifier: "Detail", sender: repo)
     }
 }
