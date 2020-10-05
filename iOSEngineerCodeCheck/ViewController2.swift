@@ -33,24 +33,6 @@ final class ViewController2: UIViewController {
         watchersLabel.text = "\(repo.watchersCount) watchers"
         forksLabel.text = "\(repo.forksCount) forks"
         issuesLabel.text = "\(repo.issuesCount) open issues"
-        getImage()
-    }
-
-    private func getImage() {
-        guard let repo = repository else { return }
-        guard let url = URL(string: repo.avatarUrl) else { return }
-
-        URLSession.shared.dataTask(with: url) { data, _, err in
-            if let err = err {
-                print(err)
-                return
-            }
-            guard let data = data else { return }
-            if let img = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self.imageView.image = img
-                }
-            }
-        }.resume()
+        imageView.setImage(of: repo.avatarUrl)
     }
 }

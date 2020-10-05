@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2671636A252B1B460088E48F /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26716369252B1B460088E48F /* Service.swift */; };
+		2671637A252B26280088E48F /* Extension+UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26716379252B26280088E48F /* Extension+UIImageView.swift */; };
 		2680B55F25288AB500DEC550 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2680B55E25288AB500DEC550 /* Repository.swift */; };
 		BF0A658D244F2A3B00280FA6 /* ViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0A658C244F2A3B00280FA6 /* ViewController2.swift */; };
 		BFD945DF244DC5E80012785A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD945DE244DC5E80012785A /* AppDelegate.swift */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		26716369252B1B460088E48F /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		26716379252B26280088E48F /* Extension+UIImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+UIImageView.swift"; sourceTree = "<group>"; };
 		2680B55E25288AB500DEC550 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		BF0A658C244F2A3B00280FA6 /* ViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController2.swift; sourceTree = "<group>"; };
 		BFD945DB244DC5E80012785A /* iOSEngineerCodeCheck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSEngineerCodeCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,6 +109,7 @@
 			children = (
 				BFD945DE244DC5E80012785A /* AppDelegate.swift */,
 				BFD945E0244DC5E80012785A /* SceneDelegate.swift */,
+				26716379252B26280088E48F /* Extension+UIImageView.swift */,
 				BFD945E2244DC5E80012785A /* ViewController.swift */,
 				26716369252B1B460088E48F /* Service.swift */,
 				BF0A658C244F2A3B00280FA6 /* ViewController2.swift */,
@@ -269,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFD945E3244DC5E80012785A /* ViewController.swift in Sources */,
+				2671637A252B26280088E48F /* Extension+UIImageView.swift in Sources */,
 				BF0A658D244F2A3B00280FA6 /* ViewController2.swift in Sources */,
 				2680B55F25288AB500DEC550 /* Repository.swift in Sources */,
 				BFD945DF244DC5E80012785A /* AppDelegate.swift in Sources */,
