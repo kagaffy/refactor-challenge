@@ -23,13 +23,8 @@ extension Repository: Decodable {
     private struct Owner: Decodable {
         let avatarUrl: String
 
-        private enum Keys: String, CodingKey {
+        private enum CodingKeys: String, CodingKey {
             case avatarUrl = "avatar_url"
-        }
-
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: Keys.self)
-            avatarUrl = try container.decode(String.self, forKey: .avatarUrl)
         }
     }
 
@@ -65,12 +60,7 @@ struct SearchResult {
 // MARK: Decodable
 
 extension SearchResult: Decodable {
-    private enum Keys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case repositories = "items"
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: Keys.self)
-        repositories = try container.decode([Repository].self, forKey: .repositories)
     }
 }
